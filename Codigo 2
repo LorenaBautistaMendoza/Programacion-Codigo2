@@ -1,0 +1,71 @@
+/* Desarrolla un programa en C que, al recibir como datos n cadenas de caracteres, indique cuáles de ellas se encuentran el formato adecuado (fecha y concepto). El programa 
+pedirá al usuario la fecha que servirá para validar las cadenas introducidas, ya que se compararán, aquellas que sean iguales se indicará con el mensaje Actividad validada 
+y las que no como Actividad no validada. Se enviará a un archivo la secuencia ingresada y el mensaje obtenido.
+Por ejemplo:
+Fecha de hoy: 19/11/2021
+Cadena: 18/11/2021 Realizar problemario
+Resultado: Actividad no válida
+
+Fecha de hoy: 19/11/2021
+Cadena: 19/11/2021 Realizar examen
+Resultado: Actividad válida */
+
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_CADENAS 100
+#define MAX_LONGITUD 100
+
+int validarActividad(char* fecha, char* cadena) {
+
+
+    char formato[100];
+    sprintf(formato, "%s:", fecha);
+
+    if (strncmp(formato, cadena, strlen(formato)) == 0) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+int main() {
+    char fecha[MAX_LONGITUD];
+    char cadenas[MAX_CADENAS][MAX_LONGITUD];
+    int numCadenas;
+
+    printf("Ingrese la fecha (dd/mm/aaaa): ");
+    scanf("%s", fecha);
+
+    printf("Ingrese el número de cadenas: ");
+    scanf("%d", &numCadenas);
+
+    printf("Ingrese las cadenas:\n");
+    for (int i = 0; i < numCadenas; i++) {
+        scanf("%s", cadenas[i]);
+    }
+
+    FILE* archivo = fopen("resultado.txt", "w");
+    if (archivo == NULL) {
+        printf("No se pudo abrir el archivo.");
+        return 1;
+    }
+
+    for (int i = 0; i < numCadenas; i++) {
+        int esValida = validarActividad(fecha, cadenas[i]);
+
+        if (esValida) {
+            printf("Actividad validada: %s\n", cadenas[i]);
+        } else {
+            printf("Actividad no validada: %s\n", cadenas[i]);
+        }
+
+        fprintf(archivo, "%s - %s\n", cadenas[i], (esValida ? "Actividad validada" : "Actividad no validada"));
+    }
+
+    fclose(archivo);
+
+    printf("Se ha guardado el resultado en el archivo 'resultado.txt'.\n");
+
+    return 0;
+}
